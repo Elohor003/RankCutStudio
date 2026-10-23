@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="theme-color" content="#101014">
+<title>RankCut Studio</title>
+<link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+<header class="topbar">
+<a class="brand" href="/">
+<span class="brand-icon">R</span>
+<span>RankCut <span class="accent">Studio</span></span>
+</a>
+<span class="private-label">YOUR VIDEO WORKSPACE</span>
+</header>
+
+<main class="container">
+<section class="hero">
+<div class="eyebrow">CREATE • RANK • EXPORT</div>
+<h1>Your clips.<br><span class="accent">Your countdown.</span></h1>
+<p>Find highlight candidates, build ranking videos, add your own sounds, and export vertical videos up to 60 seconds.</p>
+</section>
+
+{% if not ffmpeg_ready %}
+<div class="notice warning">
+FFmpeg is not detected. Install FFmpeg and FFprobe before exporting videos.
+</div>
+{% endif %}
+
+<form id="editor-form" class="editor">
+<section class="panel">
+<div class="section-heading">
+<span class="step">01</span>
+<div>
+<h2>Add your videos</h2>
+<p>Upload video files you own or have permission to use.</p>
+</div>
+</div>
+
+<label class="upload-zone" for="clips">
+<span class="upload-icon">＋</span>
+<strong>Choose video files</strong>
+<span>MP4, MOV, MKV, WEBM and more</span>
+<input id="clips" name="clips" type="file"
+accept="video/*,.mkv,.avi" multiple required>
+</label>
+
+<div id="clip-list" class="clip-list">
+<p class="muted">Your selected clips will appear here.</p>
+</div>
+
+<label class="check-row">
+<input type="checkbox" name="auto_highlights"
+id="auto-highlights" checked>
+<span>
+<strong>Automatically find highlight candidates</strong>
+<small>Uses scene changes and visual activity as clues.</small>
+</span>
+</label>
+
+<p class="muted small">
+Automatic selection is a visual heuristic, not topic-aware AI.
+You can turn it off to enter trim times manually.
+</p>
+
+<div id="manual-trims" hidden>
+<h3>Manual trim settings</h3>
+<p class="muted small">Enter start and end times in seconds for each clip.</p>
+<div id="trim-list"></div>
+</div>
+</section>
+
+<section class="panel">
+<div class="section-heading">
+<span class="step">02</span>
+<div>
+<h2>Design your ranking</h2>
+<p>Customize your video’s look and text.</p>
+</div>
+</div>
+
+<label for="project-title">Main title</label>
+<input id="project-title" name="project_title"
+type="text" maxlength="100" value="MY RANKING"
+placeholder="TOP 5 MOST AMAZING MOMENTS">
+
+<div class="field-grid">
+<div>
+<label for="format">Video format</label>
+<select id="format" name="format">
+<option value="vertical">Vertical 9:16 — Shorts</option>
+<option value="landscape">Landscape 16:9</option>
+</select>
+</div>
+<div>
+<label for="font-size">Text size</label>
+<select id="font-size" name="font_size">
+<option value="30">Small</option>
+<option value="42" selected>Medium</option>
+<option value="56">Large</option>
+</select>
+</div>
+</div>
+
+<label class="check-row">
+<input type="checkbox" name="captions" checked>
+<span>
+<strong>Show clip titles</strong>
+<small>Displays the text you enter for each clip.</small>
+</span>
+</label>
+
+<p class="muted small">
+These are on-screen titles, not automatic speech-to-text captions.
+</p>
+</section>
+
+<section class="panel">
+<div class="section-heading">
+<span class="step">03</span>
+<div>
+<h2>Music and sound effects</h2>
+<p>Give your ranking video your own sound.</p>
+</div>
+</div>
+
+<label for="music">Background music</label>
+<input id="music" name="music" type="file"
+accept="audio/*">
+<label for="music-volume">Music volume</label>
+<input id="music-volume" name="music_volume"
+type="range" min="0" max="1" step="0.05" value="0.18">
+<div class="range-labels"><span>Quiet</span><span>Loud</span></div>
+
+<div class="divider"></div>
+
+<label for="sfx-files">Sound effects</label>
+<input id="sfx-files" name="sfx_files"
+type="file" accept="audio/*" multiple>
+<p class="muted small">Choose effects, then set each effect's start time below.</p>
+<div id="sfx-list"></div>
+
+<label for="sfx-volume">Sound effect volume</label>
+<input id="sfx-volume" name="sfx_volume"
+type="range" min="0" max="2" step="0.1" value="0.8">
+<div class="range-labels"><span>Quiet</span><span>Loud</span></div>
+</section>
+
+<button id="render-button" class="primary-button" type="submit">
+✦ Create my ranking video
+</button>
+
+<p class="muted small centered">
+Maximum export length: 60 seconds. Export time depends on your computer.
+</p>
+
+<div id="status" class="status" role="status" aria-live="polite" hidden></div>
+</form>
+
+<section class="panel output-panel">
+<h2>Your finished video</h2>
+<p class="muted">Your export will appear here when processing finishes.</p>
+<a id="download-link" class="primary-button download-button"
+href="#" hidden>Download MP4</a>
+</section>
+</main>
+
+<footer>
+<span>RANKCUT STUDIO</span>
+<span>Made for your next ranking video.</span>
+</footer>
+
+<script src="{{ url_for('static', filename='app.js') }}"></script>
+</body>
+</html>
+
